@@ -1,24 +1,25 @@
 #include "ofApp.h"
 #include "qbGrid.h"
 qbGrid grid;
-
+qbGrid grid1;
 //--------------------------------------------------------------
 void ofApp::setup(){
-	grid.setup();
+	grid.setup("sunflower.png");
+	grid1.setup("sun.png");
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
 	grid.update();
+	grid1.update();
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-	//Set up gray background
-	ofBackground( 128, 128, 128 );
+	//ofBackground( 128, 128, 128 );
 
-	//Draw image with top left corner x=100, y=50 pixels
-	grid.draw(600, 0);
+	grid.draw(0, 0);
+	grid1.draw(650, 0);
 }
 
 //--------------------------------------------------------------
