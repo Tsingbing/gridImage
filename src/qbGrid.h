@@ -25,7 +25,7 @@ public:
 	int x; 
 
 	qbGrid()
-		: u(28)
+		: u(28) 
 		, v(28)
 		, w(2)
 		, x(2)
@@ -38,8 +38,6 @@ public:
 
 	//--------------------------------------------------------------
 	void setup() {
-
-		//---------------------------------------------
 		image.loadImage("sunflower.png");
 
 		//Getting pointer to pixel array of image
@@ -55,11 +53,6 @@ public:
 
 		image.setColor(10, 10, color);
 		cout << image.getColor(300, 300) << endl;
-
-		cout << image.getColor(180400).r << endl;
-
-		//----------------------------------
-
 
 		cellGap = 9.0 / 596.0 * gridWidth;
 		cellWidth = (gridWidth - (u + 1) * cellGap) / u;
