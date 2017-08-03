@@ -138,7 +138,6 @@ public:
 				ofPopMatrix();         // recall the pushed coordinate position
 			}
 		}
-
 	}
 	
 private:
