@@ -9,7 +9,7 @@ public:
 	float quadWidth, quadHeight;
 	float cellGap, quadGap;
 
-	ofImage image;		//Declare image object
+	ofImage & image;		//Declare image object
 	ofColor quadColorSet;
 	ofColor quadValue[100][100][10][10][6]; // Hue, Sat, Bri, Red, Green, Blue of each quadrant
 
@@ -20,31 +20,15 @@ public:
 	int w;
 	int x; 
 
-	qbGrid()
+	qbGrid(ofImage & image_)
 		: u(18) 
 		, v(18)
 		, w(2)
 		, x(2)
 		, gridWidth(600)
 		, gridHeight(600)
-	{}
-
-	virtual ~qbGrid() {}
-
-
-	//--------------------------------------------------------------
-	void setup(string path) {
-		//image.loadImage(path);
-		image = imageV;
-		image.resize(600, 600);
-
-		cout << image.getPixels().size() << endl;
-		cout << image.getWidth() << " + " << image.getHeight() << endl;
-		cout << cellHeight << "\n";
-		cout << cellWidth << "\n";
-		cout << quadWidth << "\n";
-		cout << quadHeight << "\n";
-
+		, image(image_) // 引用初始化
+	{
 		cellGap = 9.0 / 596.0 * gridWidth;
 		cellWidth = (gridWidth - (u + 1) * cellGap) / u;
 		cellHeight = (gridHeight - (v + 1) * cellGap) / v;
@@ -54,22 +38,40 @@ public:
 		quadHeight = (cellHeight - (x - 1) * quadGap) / x;
 	}
 
+	virtual ~qbGrid() {
+		//delete image;
+	}
+
+
+	//--------------------------------------------------------------
+	void setup(string path) {
+
+		//image.loadImage(path);
+		//image.allocate(600, 600, OF_IMAGE_COLOR);
+		cout << image.getPixels().size() << endl;
+		cout << image.getWidth() << " + " << image.getHeight() << endl;
+		cout << cellHeight << "\n";
+		cout << cellWidth << "\n";
+		cout << quadWidth << "\n";
+		cout << quadHeight << "\n";
+	}
+
 
 	//--------------------------------------------------------------
 	void update() {
-		// 更新小方格的颜色，建立多维数组quadValue[i][j][k][l][r:g:b:h:s:v]
+		//image = imageV; // copy赋值，费用高，改引用方式
+		//image.resize(600, 600);
 		image.update();
-
 	}
 
 
 	//--------------------------------------------------------------
 	void draw(float px, float py) {
-		ofSetColor(0, 0, 0);
+		ofSetColor(255, 255, 255);
 		ofPushMatrix();
 			ofTranslate(px, py);
 			//ofScale(0.5,0.5f);
-			image.draw(0, 0);
+			//image.draw(0, 0);
 			// 画网格外框
 			ofSetColor(0, 0, 255);
 			ofNoFill();
@@ -92,7 +94,7 @@ public:
 							for (size_t m = 0; m < quadWidth; m++) {
 								for (size_t n = 0; n < quadHeight; n++) {
 									// 采集像素颜色值,并计算相近的颜色
-									quadValue[i][j][k][l][0] = imageV.getColor(local_x + m,local_y + n);
+									quadValue[i][j][k][l][0] = image.getColor(local_x + m,local_y + n);
 									//quadValue[i][j][k][l][0] = videoCapture.image.getColor(local_x + m, local_y + n);
 								}
 							}
@@ -101,19 +103,19 @@ public:
 							ofFill();
 							ofDrawRectangle(local_x, local_y, quadWidth, quadHeight);
 
-							ofSetColor(0, 0, 0);
+							/*ofSetColor(0, 0, 0);
 							ofNoFill();
 							ofSetLineWidth(1);
-							ofDrawRectangle(local_x, local_y, quadWidth, quadHeight);
+							ofDrawRectangle(local_x, local_y, quadWidth, quadHeight);*/
 						}
 					}
-					ofPushMatrix();
-						ofTranslate(j*cellWidth + (j + 1)*cellGap + 0, i*cellHeight + (i + 1)*cellGap + 0, 0);
-						ofSetColor(0, 0, 0);
-						ofSetLineWidth(1);  //对后面画正方形的宽度有影响，所以结束时，重新设置为1，也不行，有bug
-						ofNoFill();
-						ofDrawRectangle(0, 0, cellWidth, cellHeight);
-					ofPopMatrix();         // recall the pushed coordinate position
+					//ofPushMatrix();
+					//	ofTranslate(j*cellWidth + (j + 1)*cellGap + 0, i*cellHeight + (i + 1)*cellGap + 0, 0);
+					//	ofSetColor(0, 0, 0);
+					//	ofSetLineWidth(1);  //对后面画正方形的宽度有影响，所以结束时，重新设置为1，也不行，有bug
+					//	ofNoFill();
+					//	ofDrawRectangle(0, 0, cellWidth, cellHeight);
+					//ofPopMatrix();         // recall the pushed coordinate position
 				}
 			}
 		ofPopMatrix();         // recall the pushed coordinate position

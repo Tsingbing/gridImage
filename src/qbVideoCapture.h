@@ -3,33 +3,34 @@
 #include "ofMain.h"
 #include "ofxOpenCv.h"
 #include "ofxCsv.h"
-#include "qbGrid.h"
+
 ofImage imageV;
+
 class qbVideoCapture {
 public:
 	ofPoint A;
 	ofPoint B;
 	ofPoint C;
 	ofPoint D;
-
-	ofxCvColorImage cvImage;
-	ofxCsv csv;
-
-	int cornerIndex = 1;
-	bool SaveWarpPoints = false;
-
-	ofVideoGrabber vidGrabber;
-	
-	ofImage images;
-
 	int camWidth;
 	int camHeight;
+	int cornerIndex = 1;
+	bool SaveWarpPoints = false;
+	ofxCvColorImage cvImage;
+	ofxCsv csv;
+	ofVideoGrabber vidGrabber;	
+	ofImage images;
 
-	ofTrueTypeFont font;
 	qbVideoCapture()
 		: camWidth(640)
 		, camHeight(480)
-	{}
+	{
+		// 分配空间 ，需要free 记住
+		cvImage.allocate(600, 600);
+		// 分配空间 ，需要free
+		imageV.allocate(600, 600, OF_IMAGE_COLOR);
+		images.allocate(640, 480, OF_IMAGE_COLOR);
+	}
 
 	virtual ~qbVideoCapture() {}
 
@@ -38,7 +39,6 @@ public:
 		vidGrabber.setDeviceID(0);
 		vidGrabber.setDesiredFrameRate(60);
 		vidGrabber.initGrabber(camWidth, camHeight);
-
 		ofSetVerticalSync(true);
 
 		// 从文件中读取四个坐标的位置
@@ -48,12 +48,6 @@ public:
 			C = ofPoint(ofToFloat(csv[2][1]), ofToFloat(csv[2][2]), ofToFloat(csv[2][3]));
 			D = ofPoint(ofToFloat(csv[3][1]), ofToFloat(csv[3][2]), ofToFloat(csv[3][3]));
 		}
-
-		// 分配空间 ，需要free 记住
-		cvImage.allocate(600, 600);
-		// 分配空间 ，需要free
-		imageV.allocate(600, 600, OF_IMAGE_COLOR);
-		images.allocate(640, 480, OF_IMAGE_COLOR);
 		//grid.setup("sunflower.png");
 	}
 
@@ -67,6 +61,21 @@ public:
 		if (vidGrabber.isFrameNew()) {
 			images.setFromPixels(vidGrabber.getPixels());
 		}
+
+		ofSetHexColor(0xffffff);
+		// 图像变形，代码执行顺序要注意，ABCD顶点要和image2匹配
+		cvImage = images;
+
+		ofPoint A_ = ofPoint(A.x - 642, A.y - 162, 0);
+		ofPoint B_ = ofPoint(B.x - 642, B.y - 162, 0);
+		ofPoint C_ = ofPoint(C.x - 642, C.y - 162, 0);
+		ofPoint D_ = ofPoint(D.x - 642, D.y - 162, 0);
+		cvImage.warpPerspective(A_, B_, C_, D_);
+
+		imageV.setFromPixels(cvImage.getPixels());
+		imageV.resize(600, 600);
+		cout << imageV.getColor(300, 300)  << endl;
+		//grid.update();
 
 		// 保存鼠标选取ABCD四个点位置。按S键，将ABCD的鼠标位置保存到文件。
 		if (SaveWarpPoints == true) {
@@ -92,32 +101,17 @@ public:
 			csv.save("morse.csv");
 			SaveWarpPoints = false;
 		}
-
-		ofSetHexColor(0xffffff);
-		// 图像变形，代码执行顺序要注意，ABCD顶点要和image2匹配
-		cvImage = images;
-
-		ofPoint A_ = ofPoint(A.x - 642, A.y - 162, 0);
-		ofPoint B_ = ofPoint(B.x - 642, B.y - 162, 0);
-		ofPoint C_ = ofPoint(C.x - 642, C.y - 162, 0);
-		ofPoint D_ = ofPoint(D.x - 642, D.y - 162, 0);
-		cvImage.warpPerspective(A_, B_, C_, D_);
-
-		imageV.setFromPixels(cvImage.getPixels());
-		imageV.resize(600, 600);
-		cout << imageV.getColor(300, 300)  << endl;
-		//grid.update();
 	}
 
 
 	//--------------------------------------------------------------
-	void draw() {
+	void draw(float px,float py) {
 		ofSetColor(255, 255, 255);
 		// 画截取之后的图片
-		imageV.draw(20, 160);
+		imageV.draw(px, py);
 
 		// 画摄像头图像
-		vidGrabber.draw(642, 162);
+		//vidGrabber.draw(642, 162);
 
 		// 画四个点，选取位置
 		ofSetColor(255, 0, 0);
