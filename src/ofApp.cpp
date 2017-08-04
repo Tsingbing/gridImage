@@ -1,25 +1,33 @@
 #include "ofApp.h"
 #include "qbGrid.h"
+#include "qbVideoCapture.h"
+
 qbGrid grid;
 qbGrid grid1;
+qbVideoCapture videoCapture;
+qbVideoCapture videoCapture1;
 //--------------------------------------------------------------
 void ofApp::setup(){
-	grid.setup("sunflower.png");
+	
 	grid1.setup("sun.png");
+	videoCapture.setup();
+	grid.setup("sunflower.png");
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
 	grid.update();
-	grid1.update();
+	//grid1.update();
+	videoCapture.update();
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
 	//ofBackground( 128, 128, 128 );
-
+	//videoCapture.draw();
 	grid.draw(0, 0);
 	grid1.draw(650, 0);
+	
 }
 
 //--------------------------------------------------------------

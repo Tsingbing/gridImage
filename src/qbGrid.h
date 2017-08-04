@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
-
+#include "qbVideoCapture.h"
 class qbGrid {
 public:
 	float gridWidth, gridHeight;
@@ -34,7 +34,8 @@ public:
 
 	//--------------------------------------------------------------
 	void setup(string path) {
-		image.loadImage(path);
+		//image.loadImage(path);
+		image = imageV;
 		image.resize(600, 600);
 
 		cout << image.getPixels().size() << endl;
@@ -58,12 +59,13 @@ public:
 	void update() {
 		// 更新小方格的颜色，建立多维数组quadValue[i][j][k][l][r:g:b:h:s:v]
 		image.update();
+
 	}
 
 
 	//--------------------------------------------------------------
 	void draw(float px, float py) {
-		ofSetColor(255, 255, 255);
+		ofSetColor(0, 0, 0);
 		ofPushMatrix();
 			ofTranslate(px, py);
 			//ofScale(0.5,0.5f);
@@ -90,7 +92,8 @@ public:
 							for (size_t m = 0; m < quadWidth; m++) {
 								for (size_t n = 0; n < quadHeight; n++) {
 									// 采集像素颜色值,并计算相近的颜色
-									quadValue[i][j][k][l][0] = image.getColor(local_x + m,local_y + n);
+									quadValue[i][j][k][l][0] = imageV.getColor(local_x + m,local_y + n);
+									//quadValue[i][j][k][l][0] = videoCapture.image.getColor(local_x + m, local_y + n);
 								}
 							}
 
